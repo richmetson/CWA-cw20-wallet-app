@@ -22,6 +22,7 @@ import { useTokenBalance } from '../hooks/useTokenBalance';
 import { useEffect, useState } from 'react';
 import { Cw20Client } from '../codegen/Cw20.client';
 import { useWallet } from '@cosmos-kit/react';
+import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 
 export default function Home() {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -39,11 +40,11 @@ export default function Home() {
     setRecipient(event.target.value);
   };
   
-  const { getCosmWasmClient, address} = useWallet();
+  const { getSigningCosmWasmClient, address} = useWallet();
 
   //cw20Client
   useEffect(() => {
-    getCosmWasmClient().then((cosmWasmClient) => {
+    getSigningCosmWasmClient().then((cosmWasmClient) => {
         if (!cosmWasmClient || !address) {
             console.error("no cosmWasmClient or no address!");
             return;
@@ -55,9 +56,10 @@ export default function Home() {
         );
         setCw20Client(newClient);
     });
-  }, [address, getCosmWasmClient]);
+  }, [address, getSigningCosmWasmClient]);
 
-  const handleSend = async () => {
+    const handleSend = async () => {
+    //const handleSend = (event: any) => {
     if (!cw20Client){
       console.error("no cw20Client, please connect your wallet");
       return;
